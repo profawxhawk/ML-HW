@@ -13,7 +13,7 @@ def gradient_with_reg(lr_model,iterations,model,param,least_fold):
         lr.plt.show()
         print(avg_train_rmse)
         lr_model.cost_func_val(least_fold+1)
-        print('Validation RMS Error '+str(lr_model.Val_rmse))
+        print('Test RMSE Error '+str(lr_model.Val_rmse))
         
 if (__name__ == "__main__"):
     lr_model=lr.linear_regression()
@@ -36,6 +36,7 @@ if (__name__ == "__main__"):
     l2_param=lr_model.regularization_hyper_param_tune("l2",least_fold)
     print("Lasso hyperparameter "+str(l1_param))
     print("Ridge hyperparameter "+str(l2_param))
+    gradient_with_reg(lr_model,100,"l1",l1_param,least_fold)
     gradient_with_reg(lr_model,100,"l2",l2_param,least_fold)
     
     

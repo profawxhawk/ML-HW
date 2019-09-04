@@ -220,10 +220,10 @@ class linear_regression:
         temp=self.loss_differential(test,fold_count+1)
         temp_cost=0 
         if test=="False":
-            self.Weight=self.Weight-(np.transpose((alpha*((np.matmul((temp),(self.train_array_x[fold_count]))/len(self.train_array_x[fold_count]))+reg_param*(np.transpose(self.Weight))))))
+            self.Weight=self.Weight-(np.transpose((alpha*((np.matmul((temp),(self.train_array_x[fold_count]))/len(self.train_array_x[fold_count]))+2*reg_param*(np.transpose(self.Weight))))))
             temp_cost=self.cost_func_train(fold_count)
         else:
-            self.Weight=self.Weight-(np.transpose((alpha*((np.matmul((temp),(self.val_array_x[fold_count]))/len(self.val_array_x[fold_count]))+reg_param*(np.transpose(self.Weight))))))
+            self.Weight=self.Weight-(np.transpose((alpha*((np.matmul((temp),(self.val_array_x[fold_count]))/len(self.val_array_x[fold_count]))+2*reg_param*(np.transpose(self.Weight))))))
             temp_cost=self.cost_func_val(fold_count)
         return temp_cost
     
@@ -238,9 +238,9 @@ class linear_regression:
             temp1=np.transpose(alpha*(np.matmul((temp),(self.val_array_x[fold_count]))/len(self.val_array_x[fold_count])))
         for i in range(len(self.Weight)):
             if(self.Weight[i]<0):
-                self.Weight[i]=self.Weight[i]-((temp1[i])+alpha*reg_param)
-            else:
                 self.Weight[i]=self.Weight[i]-((temp1[i])-alpha*reg_param)
+            else:
+                self.Weight[i]=self.Weight[i]-((temp1[i])+alpha*reg_param)
                 
         if test=="False":
             temp_cost=self.cost_func_train(fold_count)
