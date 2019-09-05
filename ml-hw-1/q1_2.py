@@ -1,5 +1,6 @@
 import linear_regression as lr
-
+import warnings
+warnings.filterwarnings("ignore")
 def gradient_with_reg(lr_model,iterations,model,param,least_fold):
         train_cost=[]
         lr_model.Weight=lr.np.zeros((11,1))
@@ -9,11 +10,13 @@ def gradient_with_reg(lr_model,iterations,model,param,least_fold):
             else:
                 train_cost.append(lr_model.gradient_descent_lasso(0.05,least_fold,param['alpha'],test="False"))
         avg_train_rmse=(sum(train_cost)/len(train_cost))
+        lr.plt.title("RMSE vs Iterations for "+str(model)+" regularization")
+        lr.plt.xlabel('Iterations', fontsize=18)
+        lr.plt.ylabel('RMSE', fontsize=18)
         lr.plt.plot(lr.np.linspace(0,iterations,len(train_cost)),train_cost,'r')      
         lr.plt.show()
-        print(avg_train_rmse)
         lr_model.cost_func_val(least_fold+1)
-        print('Test RMSE Error '+str(lr_model.Val_rmse))
+        print('Test RMSE Error for '+str(model)+" "+str(lr_model.Val_rmse))
         
 if (__name__ == "__main__"):
     lr_model=lr.linear_regression()

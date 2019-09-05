@@ -139,8 +139,7 @@ class logistic_regression:
             predict=self.prob_convert(predict)
             for i in range(len(predict)):
                 if predict[i]==self.TestY_vector[i]:
-                    count+=1
-        print(str(count)+" "+str(length))        
+                    count+=1       
         return (count/length)
             
     def gradient_descent_normal(self,alpha,test="False"):
@@ -164,14 +163,14 @@ class logistic_regression:
             h = self.sigmoid(self.TrainX_vector @ self.Weight)
             gradient = (((self.TrainX_vector.T @ (h - self.TrainY_vector)) / self.TrainY_vector.size)+2*reg_param*self.Weight)
             self.Weight -= alpha * gradient
-            temp_cost=self.cost_func(self.TrainY_vector,h,"l1",reg_param)
+            temp_cost=self.cost_func(self.TrainY_vector,h,"l2",reg_param)
         else:
             h = self.sigmoid(self.ValX_vector @ self.Weight)
             gradient = (((self.ValX_vector.T @ (h - self.ValY_vector)) / self.ValY_vector.size)+2*reg_param*self.Weight)
             self.Weight -= alpha * gradient
-            temp_cost=self.cost_func(self.ValY_vector,h,"l1",reg_param)
+            temp_cost=self.cost_func(self.ValY_vector,h,"l2",reg_param)
             
-        return temp_cost
+        return temp_cost,self.accuracy("train")
     
     def gradient_descent_lasso(self,alpha,reg_param,test="False"):
         temp_cost=0 
@@ -183,7 +182,7 @@ class logistic_regression:
                     self.Weight[i]=self.Weight[i]-alpha*((temp[i])-reg_param)
                 else:
                     self.Weight[i]=self.Weight[i]-alpha*((temp[i])+reg_param)
-            temp_cost=self.cost_func(self.TrainY_vector,h)
+            temp_cost=self.cost_func(self.TrainY_vector,h,"l1",reg_param)
         else:
             h = self.sigmoid(self.ValX_vector @ self.Weight)
             temp=((self.ValX_vector.T @ (h - self.ValY_vector)) / self.ValY_vector.size)
@@ -192,6 +191,6 @@ class logistic_regression:
                     self.Weight[i]=self.Weight[i]-alpha*((temp[i])-reg_param)
                 else:
                     self.Weight[i]=self.Weight[i]-alpha*((temp[i])+reg_param)
-            temp_cost=self.cost_func(self.ValY_vector,h)
+            temp_cost=self.cost_func(self.TrainY_vector,h,"l1",reg_param)
             
-        return temp_cost
+        return temp_cost,self.accuracy("train")

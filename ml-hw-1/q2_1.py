@@ -46,23 +46,23 @@ def compress_features(dt):
     return dt
 if (__name__ == "__main__"):
     lr_model=lr.logistic_regression()
+    error_l1=[]
+    error_l2=[]
+    accuracy_l1=[]
+    accuracy_l2=[]
+    print("loading dataset")
     dataset=lr.pd.read_csv('./q2_train.csv')
     testset=lr.pd.read_csv('./q2_test.csv')
+    print("Converting to one hot encode")
     dataset=one_hot_encode(dataset)
     testset=one_hot_encode(testset)
     lr_model.find_vector_no_folds(dataset,testset)
-    lr_model.Weight=lr.np.zeros((lr_model.TrainX_vector.shape[1],1))
-    # c= [0.001, 0.01, 0.1, 0.2,0.05,1,5,10,20,100,1000]
-    # for i in c:
-    #     lr_model.Weight=lr.np.zeros((lr_model.TrainX_vector.shape[1],1))
-    #     for j in range(1000):
-    #         (lr_model.gradient_descent_lasso(0.1,i))
-    #     score=lr_model.accuracy("val")
-    #     print(str(score)+" reg_param="+str(i))
     print("L1 gradient descent started")
     lr_model.Weight=lr.np.zeros((lr_model.TrainX_vector.shape[1],1))
     for i in range(1000):
-        (lr_model.gradient_descent_lasso(0.1,0.02))
+        a,b=(lr_model.gradient_descent_lasso(0.1,0.02))
+        error_l1.append(a)
+        accuracy_l1.append(b)
     print("train accuracy "+str(lr_model.accuracy("train")))
     print("validation accuracy "+str(lr_model.accuracy("val")))
     print("test accuracy "+str(lr_model.accuracy("test")))
@@ -70,15 +70,34 @@ if (__name__ == "__main__"):
     print("L2 gradient descent started")
     lr_model.Weight=lr.np.zeros((lr_model.TrainX_vector.shape[1],1))
     for i in range(1000):
-        (lr_model.gradient_descent_ridge(0.1,0.02))
+        a,b=(lr_model.gradient_descent_ridge(0.1,0.02))
+        error_l2.append(a)
+        accuracy_l2.append(b)
     print("train accuracy "+str(lr_model.accuracy("train")))
     print("validation accuracy "+str(lr_model.accuracy("val")))
     print("test accuracy "+str(lr_model.accuracy("test")))
     print("L2 gradient descent ended")
-                
+    lr.plt.title("Error for L1 regularization")
+    lr.plt.xlabel('iterations', fontsize=18)
+    lr.plt.ylabel('error', fontsize=18)
+    lr.plt.plot(lr.np.linspace(0,1000,len(error_l1)),error_l1,'r')  
 
-    # print("Gradient descent started")
-    # for i in range(1000):
-    #     (lr_model.gradient_descent_normal(0.1))
-    # print("Gradient descent ended")
-    # print(lr_model.accuracy("test"))
+    lr.plt.show()
+    lr.plt.xlabel('iterations', fontsize=18)
+    lr.plt.ylabel('error', fontsize=18)
+    lr.plt.title("Error for L2 regularization")
+    lr.plt.plot(lr.np.linspace(0,1000,len(error_l2)),error_l2,'r') 
+        
+    lr.plt.show()
+    lr.plt.xlabel('iterations', fontsize=18)
+    lr.plt.ylabel('accuracy', fontsize=18)
+    lr.plt.title("Accuracy for L1 regularization")
+    lr.plt.plot(lr.np.linspace(0,1000,len(accuracy_l1)),accuracy_l1,'r') 
+        
+    lr.plt.show()
+    lr.plt.xlabel('iterations', fontsize=18)
+    lr.plt.ylabel('accuracy', fontsize=18)
+    lr.plt.title("Accuracy for L2 regularization")
+    lr.plt.plot(lr.np.linspace(0,1000,len(accuracy_l2)),accuracy_l2,'r')     
+    
+    lr.plt.show()

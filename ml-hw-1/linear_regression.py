@@ -39,9 +39,8 @@ class linear_regression:
         else:
             lin_reg_regularization = linear_model.Ridge()
             
-        param={'alpha':[1,0.1,0.01,0.001,0.0001,10,20,15,5,25,30]}
-        fold_cv=KFold(n_splits=5,shuffle=True)
-        clf=GridSearchCV(lin_reg_regularization, param, cv=fold_cv)
+        param={'alpha':[1,0.1,0.01,0.001,0.0001,10,20,15,5,25,30,100,200,300,500,1000]}
+        clf=GridSearchCV(lin_reg_regularization,param,cv=5)
         clf.fit(self.train_array_x[least_fold],self.train_array_y[least_fold])
         return (clf.best_params_)
         
@@ -62,7 +61,7 @@ class linear_regression:
         output_train=pd.DataFrame([],columns=['Output'])
         
         for fold_count in range(1,fold_size+1):
-            print(fold_count)
+            print("Fold "+str(fold_count)+" getting created")
             for i in range(len(self.split_index[fold_count-1])):
                 input_val=input_val.append(dataset[self.split_index[fold_count-1][i]:self.split_index[fold_count-1][i]+1][dataset.columns[1:len(dataset.keys())-1]])
                 output_val=output_val.append(dataset[self.split_index[fold_count-1][i]:self.split_index[fold_count-1][i]+1][dataset.columns[len(dataset.keys())-1:]])
