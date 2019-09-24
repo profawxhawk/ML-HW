@@ -60,7 +60,7 @@ if (__name__ == "__main__"):
     print("L1 gradient descent started")
     lr_model.Weight=lr.np.zeros((lr_model.TrainX_vector.shape[1],1))
     for i in range(1000):
-        a,b=(lr_model.gradient_descent_lasso(0.1,0.02))
+        a,b=(lr_model.gradient_descent_lasso(0.1,0.002))
         error_l1.append(a)
         accuracy_l1.append(b)
     print("train accuracy "+str(lr_model.accuracy("train")))
@@ -70,7 +70,7 @@ if (__name__ == "__main__"):
     print("L2 gradient descent started")
     lr_model.Weight=lr.np.zeros((lr_model.TrainX_vector.shape[1],1))
     for i in range(1000):
-        a,b=(lr_model.gradient_descent_ridge(0.1,0.02))
+        a,b=(lr_model.gradient_descent_ridge(0.1,0.002))
         error_l2.append(a)
         accuracy_l2.append(b)
     print("train accuracy "+str(lr_model.accuracy("train")))

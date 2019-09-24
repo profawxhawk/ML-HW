@@ -178,9 +178,9 @@ class logistic_regression:
             h = self.sigmoid(self.TrainX_vector @ self.Weight)
             temp=((self.TrainX_vector.T @ (h - self.TrainY_vector)) / self.TrainY_vector.size)
             for i in range(len(self.Weight)):
-                if(self.Weight[i]<0):
+                if(self.Weight[i]<=0):
                     self.Weight[i]=self.Weight[i]-alpha*((temp[i])-reg_param)
-                else:
+                elif(self.Weight[i]>0):
                     self.Weight[i]=self.Weight[i]-alpha*((temp[i])+reg_param)
             temp_cost=self.cost_func(self.TrainY_vector,h,"l1",reg_param)
         else:
