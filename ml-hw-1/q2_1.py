@@ -56,6 +56,8 @@ if (__name__ == "__main__"):
     print("Converting to one hot encode")
     dataset=one_hot_encode(dataset)
     testset=one_hot_encode(testset)
+    print(dataset['age'])
+    exit()
     lr_model.find_vector_no_folds(dataset,testset)
     print("L1 gradient descent started")
     lr_model.Weight=lr.np.zeros((lr_model.TrainX_vector.shape[1],1))
