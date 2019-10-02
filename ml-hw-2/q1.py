@@ -1,6 +1,6 @@
 import h5py
 import numpy as np
-import svm
+from svm import SVM
 import matplotlib.pyplot as plt
 from sklearn.svm import SVC
 def ker_d1(X,Y):
@@ -22,7 +22,7 @@ def fit_and_contour(X,Y,myker):
         else:
             cols.append('blue')
     plt.scatter(X[:,0], X[:,1],c=cols)
-    svc= SVC(kernel=myker)
+    svc= SVC(kernel='rbf')
     svc.fit(X,Y.ravel())
     # Get limit of axis to form meshgrid
     ax = plt.gca()
@@ -74,21 +74,27 @@ def extract_h5(file_name):
         else:
             data.append(np.asarray(group[()]))
     return data
-
+def split_data(data):
+    split=(int)(4*(len(data[1]))/5)
+    x1=np.array(data[0])
+    y1=np.array(data[1])
+    temp=np.column_stack((x1,y1))
+    return (temp[0:split],temp[split:])
 if (__name__ == "__main__"):
     data=[]
     for i in range(1,6):
         data.append(extract_h5('./q1_datasets/data_'+str(i)+'.h5'))
     # for i in data:
         # ploty(i[0],i[1])
-    fit_and_contour(data[2][0],data[2][1],ker_3)
-        
-    #     svm=svm((2,1),i[0])
-    #     input={-1:[],1:[]}
-    #     for j in range(len(i[1])):
-    #         if i[1][j]==0:
-    #             input[-1].append(i[0][j])
-    #         else:
-    #             input[1].append(i[0][j])
-    #     break
-    #     svm.set(input)
+    #fit_and_contour(data[0][0],data[0][1],ker_1)
+    #fit_and_contour(data[1][0],data[1][1],ker_2)
+    #fit_and_contour(data[2][0],data[2][1],ker_3)
+    #fit_and_contour(data[3][0],data[3][1],'rbf')
+    #fit_and_contour(data[4][0],data[4][1],'rbf')
+    # for i in range(3,5):
+    #     train,test=split_data(data[i])
+    #     svm_model=SVM(train,test)
+    #     svm_model.linear_svm()
+    
+    
+                
