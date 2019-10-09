@@ -30,26 +30,50 @@ class SVM:
     def rbf_svm(self):
         svc= SVC(kernel='rbf')
         svc.fit(self.train[:,0:2],self.train[:,2].ravel())
-        y_pred=svc.predict(self.test[:,0:2])
-        y_pred1=self.predict_rbf(svc,self.test[:,0:2])
+        
+        y_pred_train=svc.predict(self.train[:,0:2])
+        y_pred1_train=self.predict_rbf(svc,self.train[:,0:2])
+        print("Train set")
         print('Accuracy score from SVM predict')
-        self.accuracy(y_pred)
+        self.accuracy(y_pred_train)
         print('Accuracy score from self defined predict')
-        self.accuracy(y_pred1)
+        self.accuracy(y_pred1_train)
+        
+        y_pred_test=svc.predict(self.test[:,0:2])
+        y_pred1_test=self.predict_rbf(svc,self.test[:,0:2])
+        print("Test set")
+        print('Accuracy score from SVM predict')
+        self.accuracy(y_pred_test,True)
+        print('Accuracy score from self defined predict')
+        self.accuracy(y_pred1_test,True)
         
     def linear_svm(self):
         svc= SVC(kernel='linear')
         svc.fit(self.train[:,0:2],self.train[:,2].ravel())
-        y_pred=svc.predict(self.test[:,0:2])
-        y_pred1=self.predict_linear(self.test[:,0:2],svc.coef_,svc.intercept_)
-        y_pred1=np.where(y_pred1==-1.,0,1)
-        print('Accuracy score from SVM predict')
-        self.accuracy(y_pred)
-        print('Accuracy score from self defined predict')
-        self.accuracy(y_pred1)
         
-    def accuracy(self,pred):
-        print ('Accuracy Score :',accuracy_score(self.test[:,2].ravel(),pred))
+        y_pred_train=svc.predict(self.train[:,0:2])
+        y_pred1_train=self.predict_linear(self.train[:,0:2],svc.coef_,svc.intercept_)
+        y_pred1_train=np.where(y_pred1_train==-1.,0,1)
+        print("Train set")
+        print('Accuracy score from SVM predict')
+        self.accuracy(y_pred_train)
+        print('Accuracy score from self defined predict')
+        self.accuracy(y_pred1_train)
+        
+        y_pred_test=svc.predict(self.test[:,0:2])
+        y_pred1_test=self.predict_linear(self.test[:,0:2],svc.coef_,svc.intercept_)
+        y_pred1_test=np.where(y_pred1_test==-1.,0,1)
+        print("Test set")
+        print('Accuracy score from SVM predict')
+        self.accuracy(y_pred_test,True)
+        print('Accuracy score from self defined predict')
+        self.accuracy(y_pred1_test,True)
+        
+    def accuracy(self,pred,test=False):
+        if test==True:
+            print ('Accuracy Score :',accuracy_score(self.test[:,2].ravel(),pred))
+        else:
+            print ('Accuracy Score :',accuracy_score(self.train[:,2].ravel(),pred))
     
     def fit(self, data):
         pass

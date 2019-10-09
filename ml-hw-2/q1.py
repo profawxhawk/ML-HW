@@ -6,6 +6,7 @@ from svm import SVM
 import matplotlib.pyplot as plt
 from sklearn.svm import SVC
 import warnings
+from sklearn.neighbors import LocalOutlierFactor
 warnings.filterwarnings("ignore")
 def ker_1(X,Y):
     return np.square(np.dot(X, Y.T))
@@ -97,7 +98,19 @@ def z_score(temp,kernel):
     data=[input,output]
     fit_and_contour(data[0],data[1],kernel)
         
-    
+def outlier_remove_lof(x,y):
+    clf = LocalOutlierFactor()
+    y_pred = clf.fit_predict(x)
+    scores = clf.negative_outlier_factor_
+    temp=-scores
+    x1=[]
+    y1=[]
+    for i in range(len(temp)):
+        if temp[i]<1.2:
+            x1.append(x[i])
+            y1.append(y)
+    return x1,y1
+            
 def seg(X,Y):
     ones=[]
     zeros=[]
@@ -134,40 +147,50 @@ def outlier_remove(index,data):
         if ans==j:
             data_woo.append(i)
             output_woo.append(j)
-            
+    
     seg_data=seg(data_woo,output_woo)   
+    x,y=outlier_remove_lof(seg_data[1],1)
+    x1,y1=outlier_remove_lof(seg_data[-1],-1)
+    x2=np.asarray(x+x1)
+    y2=np.asarray(y+y1)
     z_score(seg_data,kernel)
+    
     
 if (__name__ == "__main__"):
     data=[]
     for i in range(1,6):
         data.append(extract_h5('./q1_datasets/data_'+str(i)+'.h5'))
-    print("Data points scatter plot")
-    for i in data:
-        ploty(i[0],i[1])
-    print("Decision boundaries for datasets")
-    fit_and_contour(data[0][0],data[0][1],ker_1)
-    fit_and_contour(data[1][0],data[1][1],ker_2)
-    fit_and_contour(data[2][0],data[2][1],ker_3)
-    fit_and_contour(data[3][0],data[3][1],'rbf')
-    fit_and_contour(data[4][0],data[4][1],'rbf')
+    # print("Data points scatter plot")
+    # for i in data:
+    #     ploty(i[0],i[1])
+    # print("Decision boundaries for datasets")
+    # fit_and_contour(data[0][0],data[0][1],ker_1)
+    # fit_and_contour(data[1][0],data[1][1],ker_2)
+    # fit_and_contour(data[2][0],data[2][1],ker_3)
+    # fit_and_contour(data[3][0],data[3][1],'rbf')
+    # fit_and_contour(data[4][0],data[4][1],'rbf')
     
-    print("Outlier removed data")
-    for i,j in enumerate(data):
-        outlier_remove(i,j)
+    # print("Outlier removed data")
+    # for i,j in enumerate(data):
+    #     outlier_remove(i,j)
 
-    print("Linear svm")
-    print()
-    for i in range(3,5):
-        train,test=split_data(data[i])
-        svm_model=SVM(train,test)
-        svm_model.linear_svm()
+    # print("Linear svm")
+    # print()
+    # for i in range(3,5):
+    #     print("for dataset "+str(i+1))
+    #     train,test=split_data(data[i])
+    #     svm_model=SVM(train,test)
+    #     svm_model.linear_svm()
     
-    print("RBF svm")
-    print()
-    for i in range(3,5):
-        train,test=split_data(data[i])
-        svm_model=SVM(train,test)
-        svm_model.rbf_svm()
+    # print("RBF svm")
+    # print()
+    # for i in range(3,5):
+    #     print("for dataset "+str(i+1))
+    #     train,test=split_data(data[i])
+    #     svm_model=SVM(train,test)
+    #     svm_model.rbf_svm()
+    train,test=split_data(data[4])
+    svm_model=SVM(train,test)
+    svm_model.rbf_svm()
     
                 
