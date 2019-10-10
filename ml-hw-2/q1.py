@@ -160,35 +160,35 @@ if (__name__ == "__main__"):
     data=[]
     for i in range(1,6):
         data.append(extract_h5('./q1_datasets/data_'+str(i)+'.h5'))
-    # print("Data points scatter plot")
-    # for i in data:
-    #     ploty(i[0],i[1])
-    # print("Decision boundaries for datasets")
-    # fit_and_contour(data[0][0],data[0][1],ker_1)
-    # fit_and_contour(data[1][0],data[1][1],ker_2)
-    # fit_and_contour(data[2][0],data[2][1],ker_3)
-    # fit_and_contour(data[3][0],data[3][1],'rbf')
-    # fit_and_contour(data[4][0],data[4][1],'rbf')
+    print("Data points scatter plot")
+    for i in data:
+        ploty(i[0],i[1])
+    print("Decision boundaries for datasets")
+    fit_and_contour(data[0][0],data[0][1],ker_1)
+    fit_and_contour(data[1][0],data[1][1],ker_2)
+    fit_and_contour(data[2][0],data[2][1],ker_3)
+    fit_and_contour(data[3][0],data[3][1],'rbf')
+    fit_and_contour(data[4][0],data[4][1],'rbf')
     
-    # print("Outlier removed data")
-    # for i,j in enumerate(data):
-    #     outlier_remove(i,j)
+    print("Outlier removed data")
+    for i,j in enumerate(data):
+        outlier_remove(i,j)
 
-    # print("Linear svm")
-    # print()
-    # for i in range(3,5):
-    #     print("for dataset "+str(i+1))
-    #     train,test=split_data(data[i])
-    #     svm_model=SVM(train,test)
-    #     svm_model.linear_svm()
+    print("Linear svm")
+    print()
+    for i in range(3,5):
+        print("for dataset "+str(i+1))
+        train,test=split_data(data[i])
+        svm_model=SVM(train,test)
+        svm_model.linear_svm()
     
-    # print("RBF svm")
-    # print()
-    # for i in range(3,5):
-    #     print("for dataset "+str(i+1))
-    #     train,test=split_data(data[i])
-    #     svm_model=SVM(train,test)
-    #     svm_model.rbf_svm()
+    print("RBF svm")
+    print()
+    for i in range(3,5):
+        print("for dataset "+str(i+1))
+        train,test=split_data(data[i])
+        svm_model=SVM(train,test)
+        svm_model.rbf_svm()
     train,test=split_data(data[4])
     svm_model=SVM(train,test)
     svm_model.rbf_svm()

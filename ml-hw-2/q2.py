@@ -238,7 +238,6 @@ if (__name__ == "__main__"):
     train_data,labels=extract_data()
     for i in train_data:
         i[0]=normalize123(i[0])
-        i[0]=pca_proc(i[0])
     k_cross_split=split_train(train_data[0])
     
     trainx=[]
