@@ -123,7 +123,7 @@ if (__name__ == "__main__"):
     
     for i in range(len(fpr)):
         lr.plt.plot(fpr[i],tpr[i],label=('Class for '+str(i)))
-    lr.plt.legend(loc='bottom right')
+    lr.plt.legend(loc='lower right')
     lr.plt.show()
     
     # roc=lr.np.array(roc)

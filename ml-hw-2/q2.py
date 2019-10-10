@@ -9,6 +9,10 @@ from sklearn.decomposition import PCA
 from sklearn.metrics import confusion_matrix 
 from sklearn.metrics import accuracy_score 
 from sklearn.metrics import classification_report 
+from sklearn.preprocessing import label_binarize
+from sklearn.metrics import roc_curve
+import warnings
+warnings.filterwarnings("ignore")
 def unpickle(file):
     with open(file, 'rb') as fo:
         dict = pickle.load(fo, encoding='bytes')
@@ -63,6 +67,20 @@ def normalize123(data,test):
     test -= mean
     return data,test
 
+def roc(ovo,X_test,Y_test):
+    y = label_binarize(Y_test, classes=[0,1,2,3,4,5,6,7,8,9])
+    prob = ovo.decision_function(X_test)
+    fpr=[0]*10
+    tpr=[0]*10
+    for i in range(10):
+        fpr[i],tpr[i],temp=roc_curve(y[:, i],prob[:, i])
+    plt.title('Receiver Operating Characteristic')
+    for i in range(10):
+        plt.plot(fpr[i],tpr[i],label=('Class for '+str(i)))
+    plt.plot([0, 1], [0, 1],linestyle='--')
+    plt.legend(loc='bottom right')
+    plt.show()
+    
 def svm_linear(X,Y,x,y,model):
     X_train=X
     X_test=x
@@ -79,6 +97,7 @@ def svm_linear(X,Y,x,y,model):
     print("Model accuracy is: ", accuracy)
     results = confusion_matrix(Y_test.ravel(),y_pred) 
     print("Confusion Matrix: ",results) 
+    roc(mod,X_test,Y_test)
 
 def svm_rbf(X,Y,x,y,model):
     X_train=X
@@ -96,6 +115,7 @@ def svm_rbf(X,Y,x,y,model):
     print("Model accuracy is: ", accuracy)
     results = confusion_matrix(Y_test.ravel(),y_pred) 
     print("Confusion Matrix: ",results) 
+    roc(mod,X_test,Y_test)
     
 def svm_poly(X,Y,x,y,model):
     X_train=X
@@ -112,8 +132,16 @@ def svm_poly(X,Y,x,y,model):
     accuracy = accuracy_score(Y_test.ravel(), y_pred)
     print("Model accuracy is: ", accuracy)
     results = confusion_matrix(Y_test.ravel(),y_pred) 
-    print("Confusion Matrix: ",results)
-
+    print("Confusion Matrix: ",results) 
+    roc(mod,X_test,Y_test)
+def pca(train):
+    pca = PCA(n_components=100, random_state=0, svd_solver='randomized')
+    pca.fit(train)
+    X_train = pca.transform(train)
+    return X_train
+def pca_proc(i):
+    return pca(i)
+    
 def split_train(data):
     split=[]
     split.append([data[0][:2000],data[1][:2000]])
@@ -122,22 +150,52 @@ def split_train(data):
     split.append([data[0][6000:8000],data[1][6000:8000]])
     split.append([data[0][8000:],data[1][8000:]])
     return split
-
+def change_label(index,input):
+    temp=np.where(input == i, 1, 0)
+    return temp
+def one_vs_all(ker,TrainX,TrainY,TestX,TestY):
+    fpr_li=[]
+    tpr_li=[]
+    for i in range(10):
+        mod=SVC(kernel=ker)
+        temp_trainy=change_label(i,TrainY)
+        temp_testy=change_label(i,TestY)
+        mod.fit(TrainX,temp_trainy.ravel())
+        probs = mod.predict_proba(TestX)
+        probs = probs[:, 1]
+        fpr, tpr, thresholds = roc_curve(temp_testy, probs)
+        fpr_li.append(fpr)
+        tpr_li.append(tpr)
+        y_pred = mod.predict(TestX)
+        accuracy = accuracy_score(TestY.ravel(), y_pred)
+        print("Model accuracy is: ", accuracy)
+        results = confusion_matrix(TestY.ravel(),y_pred) 
+        print("Confusion Matrix: ",results) 
+    for i in range(len(fpr_li)):
+        plt.plot(fpr_li[i],tpr_li[i],label=('Class for '+str(i)))
+    plt.legend(loc='lower right')
+    plt.show()
+    
 def call_svm(X,Y,x,y):
     print("linear svm ovo start")
     svm_linear(X,Y,x,y,'ovo')
     print("linear svm ovr start")
     svm_linear(X,Y,x,y,'ovr')
-#     svm_rbf(X,Y,x,y,'ovo')
-#     svm_rbf(X,Y,x,y,'ovr')
-#     svm_poly(X,Y,x,y,'ovo')
-#     svm_poly(X,Y,x,y,'ovr')
+    print("rbf svm ovo start")
+    svm_rbf(X,Y,x,y,'ovo')
+    print("rbf svm ovr start")
+    svm_rbf(X,Y,x,y,'ovr')
+    print("poly svm ovo start")
+    svm_poly(X,Y,x,y,'ovo')
+    print("poly svm ovr start")
+    svm_poly(X,Y,x,y,'ovr')
 
 if (__name__ == "__main__"):
     train_data,test_data,labels=extract_data()
     for i in train_data:
         temp_test=test_data
         i[0],temp_test[0]=normalize123(i[0],temp_test[0])
+        i[0]=pca_proc(i[0])
     k_cross_split=split_train(train_data[0])
     
     trainx=[]
@@ -164,5 +222,4 @@ if (__name__ == "__main__"):
     for i in range(5):
         print("svm for "+str(i+1)+" started")
         call_svm(trainx[i],trainy[i],testx[i],testy[i])
-        break
     
